@@ -8,3 +8,9 @@ const xss = require('xss');
 
 usersRouter
     .route('/')
+    .get((req, res, next) => {
+        //const knexInstance = req.app.get('db')
+        res.send('yes')
+    })
+
+    module.exports = usersRouter
