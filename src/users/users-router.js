@@ -9,8 +9,66 @@ const xss = require('xss');
 usersRouter
     .route('/')
     .get((req, res, next) => {
-        //const knexInstance = req.app.get('db')
-        res.send('yes')
+        const knexInstance = req.app.get('db')
+        UsersService.getAllUsers(knexInstance)
+        .then(users => {
+            res.json(users)
+        })
+        .catch(next)
+    })
+    .post(jsonParser, (req, res, next) => {
+        const {username, password, age, height} = req.body
+        const newUser = {height, age, username, password}
+
+        for (const [key, value] of Object.entries(newUser)) {
+            if (value == null) {
+                return res.status(400).json({
+                error: {message: `Missing '${key}' in request body`},
+                });
+            }
+        }
+
+        newUser.username = username;
+        newUser.password = password;
+
+    if (!username) {
+        return res
+            .status(400)
+            .send('Username required');
+    }
+    if (!password) {
+        return res
+        .status(400)
+        .send('Password required');
+    }
+    if (username.length < 6 || username.length > 20) {
+        return res
+        .status(400)
+        .send('Username must be between 6 and 20 characters');
+    }
+      // password length
+    if (password.length < 8 || password.length > 36) {
+        return res
+        .status(400)
+        .send('Password must be between 8 and 36 characters');
+    }
+      // password contains digit, using a regex here
+    if (!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+        return res
+        .status(400)
+        .send('Password must be contain at least one digit');
+    }
+
+    UsersService.insertUser(
+        req.app.get('db'),
+        newUser
+    )
+        .then(user => {
+            res.status(201)
+            .location(`/api/users`)
+            .json(user)
+        })
+        .catch(next)
     })
 
     module.exports = usersRouter
