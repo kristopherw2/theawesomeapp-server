@@ -1,10 +1,11 @@
 const usersService = {
-    getAllUsers(knex){
+    getUserWithUserName(knex, username){
         return knex
-        .select()
         .from('users')
-        
+        .where({username})
+        .first()
     },
+
     getUserByUsernameAgeHeightById(knex, id) {
         return knex
         .from('users')
@@ -13,15 +14,23 @@ const usersService = {
         .where({ id })
     },
 
-    insertUser(db, newUser) {
-        return db
-          .insert(newUser)
-          .into("users")
-          .returning("*")
-          .then(rows => {
+    insertUser(knex, newUser) {
+        return knex
+        .insert(newUser)
+        .into("users")
+        .returning("*")
+        .then(rows => {
             return rows[0];
-          });
-      },
+        });
+    },
+
+    comparePasswords(knex, password) {
+        return knex
+        .from('users')
+        .where({password})
+        .first()
+    },
+
 };
 
 module.exports = usersService

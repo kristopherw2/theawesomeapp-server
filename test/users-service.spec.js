@@ -31,7 +31,7 @@ context('Given users table has data', () => {
             .insert(testUsers)
     });
 
-    it.only('getUserByUsernamePassword() resolves users with username age height', () => {
+    it('getUserByUsernamePassword() resolves users with username age height', () => {
         const testUserName = 'firstuser';
         const testUserPassword = 'password1'
         const expectedUser = {
