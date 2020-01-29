@@ -19,7 +19,7 @@ usersRouter
 
 
     usersRouter
-    .route('/create')
+    .route('/registration')
     .post(jsonParser, (req, res, next) => {
         const {username, password, age, height} = req.body
         const newUser = {height, age, username, password}
@@ -57,7 +57,7 @@ usersRouter
     if (password.length < 8 || password.length > 36) {
         return res
         .status(400)
-        .send('Password must be between 8 and 36 characters');
+        .send({error: {message: "Password must be between 8 and 36 characters" } });
     }
       // password contains digit, using a regex here
     if (!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {

@@ -28,8 +28,7 @@ afterEach(() => {
 
 after('disconnect from db', () => db.destroy());
 
-describe.only('POST /api/users/login', () => {
-    console.log(testUsers)
+describe('POST /api/users/login', () => {
     
     beforeEach('insert testUsers', () => {
         return db
@@ -49,7 +48,6 @@ describe.only('POST /api/users/login', () => {
     //         password: testUser.password,
     //     }
     // });
-    console.log(requiredFields)
         //delete loginAttemptBody[field]
 
         return supertest(app)
@@ -77,7 +75,6 @@ describe.only('POST /api/users/login', () => {
     })
 
     it(`responds 200 and valid usercreds when valid credentials`, () => {
-        console.log(testUser)
         
         const userValidCreds = {
             username: testUser.username,
@@ -95,3 +92,48 @@ describe.only('POST /api/users/login', () => {
         .expect(200, expectedResponse)
     })
 });
+
+describe(`Post /api/users/registration`, () => {
+    context('User Validation', () => {
+        
+        beforeEach('insert users', () => {
+            return db
+            .insert(testUsers)
+            .into('users')
+        });
+
+        const requiredFields = ['username', 'password', 'age', 'height'];
+        
+        const missingRequiredFields = ['username', 'password', 'age'];
+        missingRequiredFields.forEach(field => {
+            const  registerAttempt = {
+                username: 'test username',
+                password: 'test password',
+                age: 34,
+            }
+        })
+        console.log(missingRequiredFields)
+
+        it(`responds with 400 error when missing a field`, () => {
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(missingRequiredFields)
+                .expect(400, {
+                    error: { message: `Missing '${requiredFields[3]}' in request body` }
+                })
+        });
+
+        it.only(`responds 400 'Password must be longer than 8 characters' when empty password`, () => {
+            const userShortPassword = {
+                username: 'testusername',
+                password: '1234567',
+                age: 34,
+                height: 120,
+            }
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(userShortPassword)
+                .expect(400, { error: { message: "Password must be between 8 and 36 characters"} })
+        })
+    })
+})
