@@ -12,7 +12,7 @@ usersRouter
         const knexInstance = req.app.get('db')
         UsersService.getAllUsers(knexInstance)
         .then(users => {
-            res.json(users)
+            return res.json(users)
         })
         .catch(next)
     })
@@ -81,19 +81,21 @@ usersRouter
         username
     )
         .then(hasUserWithUsername => {
+            console.log(hasUserWithUsername);
             if(hasUserWithUsername) {
                 return res.status(400).json({error: {message: `Username already taken`}})
             }
         })
+        .catch(next)
 
     UsersService.insertUser(
         req.app.get('db'),
         newUser
     )
         .then(user => {
-            res.status(201)
-            .location(`/api/users`)
-            .json(user)
+            return res.status(201)
+                .location(`/api/users`)
+                .json(user)
         })
         .catch(next)
     })
@@ -132,46 +134,53 @@ usersRouter
                 }
                 const sub = dbUser.username
                 const payload = dbUser.id
-                res.send({
+                return res.send({
                     id: payload,
                     username: sub,
                 })
             })
         })
         .catch(next)
+    });
+
+    usersRouter
+    .route('/:user_id')
+    .all((req, res, next) => {
+        UsersService.getUserById(
+            req.app.get('db'),
+            req.params.user_id
+        )
+        .then(user => {
+            if(!user){
+                return res.status(404).json({error: {message: `User does not exist`} })
+            }
+            return res.user = usersRouter
+            next()   
+        })
+        .catch(next)
     })
+    .patch(jsonParser, (req, res, next) => {
+        const {id, username, weight} = req.body
+        const userToUpdate = {id, username, weight}
+        const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
+        if(numberOfValues === 0) {
+            return res.status(400).json({
+                error: {
+                    message: `Request must contain a new weight`
+                }
+            })
+        }
 
-    //     newUser.username = username;
-    //     newUser.password = password;
+        UsersService.updateUserWeight(
+            req.app.get('db'),
+            req.params.user_id,
+            userToUpdate.weight
+        )
+        .then(numRowsAffected => {
+            return res.status(204).end
+        })
+        .catch(next)
+    });
 
-    // if (!username) {
-    //     return res
-    //         .status(400)
-    //         .send('Username required');
-    // }
-    // if (!password) {
-    //     return res
-    //     .status(400)
-    //     .send('Password required');
-    // }
-    // if (username.length < 6 || username.length > 20) {
-    //     return res
-    //     .status(400)
-    //     .send('Username must be between 6 and 20 characters');
-    // }
-    //   // password length
-    // if (password.length < 8 || password.length > 36) {
-    //     return res
-    //     .status(400)
-    //     .send('Password must be between 8 and 36 characters');
-    // }
-    //   // password contains digit, using a regex here
-    // if (!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
-    //     return res
-    //     .status(400)
-    //     .send('Password must be contain at least one digit');
-    // }
-
-   
 
     module.exports = usersRouter

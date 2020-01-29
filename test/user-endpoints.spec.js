@@ -41,14 +41,6 @@ describe('POST /api/users/login', () => {
 
     it(`Responds with 400 required error when a field is missing`, () => {
         const requiredFields = ['username', 'password']
-    
-    //     requiredFields.forEach(field => {
-    //     const loginAttemptBody = {
-    //         username: testUser.username,
-    //         password: testUser.password,
-    //     }
-    // });
-        //delete loginAttemptBody[field]
 
         return supertest(app)
             .post('/api/users/login')
@@ -112,8 +104,6 @@ describe(`Post /api/users/registration`, () => {
                 age: 34,
             }
         })
-        console.log(missingRequiredFields)
-
         it(`responds with 400 error when missing a field`, () => {
             return supertest(app)
                 .post('/api/users/registration')
@@ -205,6 +195,17 @@ describe(`Post /api/users/registration`, () => {
             .send(duplicateUser)
             .expect(400, {error: {message: `Username already taken`} }
             )
+        });
+    });
+});
+
+describe('PATCH /api/users/:user_id', () => {
+    context(`Given no users`, () => {
+        it(`responds with 404`, () => {
+            const userId = 123456;
+            return supertest(app)
+            .patch(`/api/users/${userId}`)
+            .expect(404, {error: {message: 'User does not exist'} })
         });
     });
 });

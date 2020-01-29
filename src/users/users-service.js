@@ -1,4 +1,12 @@
 const usersService = {
+
+    getUserById(knex, id){
+        return knex
+        .from('users')
+        .where({id})
+        .first()
+    },
+
     getUserWithUserName(knex, username){
         return knex
         .from('users')
@@ -35,8 +43,14 @@ const usersService = {
         return knex
             .from('users')
             .where({username})
-            .first()
-            .then(user => !!user)
+            .select('username')
+            //.then(user => !!user)
+    },
+
+    updateUserWeight(knex, id, newWeight) {
+        return knex
+        .where({id})
+        .update(newWeight)
     }
 
 };
