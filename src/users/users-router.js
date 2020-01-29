@@ -59,12 +59,32 @@ usersRouter
         .status(400)
         .send({error: {message: "Password must be between 8 and 36 characters" } });
     }
+
+    if(password.startsWith(' ') || password.endsWith(' ')) {
+        return res
+        .status(400)
+        .send({error: {
+            message: "Password must not start with spaces"
+            }
+        })
+    }
+
       // password contains digit, using a regex here
     if (!password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
         return res
         .status(400)
-        .send('Password must be contain at least one digit');
+        .send({error: { message: 'Password must be contain at least one digit'} });
     }
+    
+    UsersService.hasUserWithUsername(
+        req.app.get('db'),
+        username
+    )
+        .then(hasUserWithUsername => {
+            if(hasUserWithUsername) {
+                return res.status(400).json({error: {message: `Username already taken`}})
+            }
+        })
 
     UsersService.insertUser(
         req.app.get('db'),

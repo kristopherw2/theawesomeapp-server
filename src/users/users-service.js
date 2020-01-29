@@ -31,6 +31,14 @@ const usersService = {
         .first()
     },
 
+    hasUserWithUsername(knex, username){
+        return knex
+            .from('users')
+            .where({username})
+            .first()
+            .then(user => !!user)
+    }
+
 };
 
 module.exports = usersService

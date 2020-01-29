@@ -123,7 +123,7 @@ describe(`Post /api/users/registration`, () => {
                 })
         });
 
-        it.only(`responds 400 'Password must be longer than 8 characters' when empty password`, () => {
+        it(`responds 400 'Password must be longer than 8 characters' when empty password`, () => {
             const userShortPassword = {
                 username: 'testusername',
                 password: '1234567',
@@ -134,6 +134,77 @@ describe(`Post /api/users/registration`, () => {
                 .post('/api/users/registration')
                 .send(userShortPassword)
                 .expect(400, { error: { message: "Password must be between 8 and 36 characters"} })
+        });
+
+        it(`responds 400 'Password must be between 8 and 36 characters' when password is greater than 36 characters`, ()  => {
+            const longPassword = {
+                username: 'testusername',
+                password: 'a1'.repeat(37),
+                age: 34,
+                height: 120,
+            }
+
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(longPassword)
+                .expect(400, { error: { message: "Password must be between 8 and 36 characters"} })
+        });
+
+        it(`responds 400 error when password starts with spaces`, () => {
+            const userPasswordStartsSpaces = {
+                username: 'testuser',
+                password: ' 12345678',
+                age: 34,
+                height: 120
+            }
+
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(userPasswordStartsSpaces)
+                .expect(400, { error: { message: "Password must not start with spaces"} } )
         })
-    })
-})
+
+        it(`responds 400 error when password starts with spaces`, () => {
+            const userPasswordEndsSpaces = {
+                username: 'testuser',
+                password: '12345678 ',
+                age: 34,
+                height: 120
+            }
+
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(userPasswordEndsSpaces)
+                .expect(400, { error: { message: "Password must not start with spaces"} } )
+        })
+
+        it(`responds 400 error when password does not contain a digit`, () => {
+            const userPasswordNoDigit = {
+                username: 'testuser',
+                password: 'abcdefghijk',
+                age:34,
+                height: 120
+            };
+
+            return supertest(app)
+                .post('/api/users/registration')
+                .send(userPasswordNoDigit)
+                .expect(400, {error: { message: 'Password must be contain at least one digit'} })
+        });
+
+        it(`responds 400 'User name already taken' when username isn't unique`, () => {
+            const duplicateUser = {
+                username: testUser.username,
+                password: "a1adwdwa",
+                age: 34,
+                height: 120
+            }
+
+            return supertest(app)
+            .post('/api/users/registration')
+            .send(duplicateUser)
+            .expect(400, {error: {message: `Username already taken`} }
+            )
+        });
+    });
+});
