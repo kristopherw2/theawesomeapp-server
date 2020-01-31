@@ -23,11 +23,7 @@ usersRouter
     .post(jsonParser, (req, res, next) => {
         const {username, password, age, height, weight} = req.body
         const newUser = {height, age, username, password, weight}
-        console.log(newUser)
-
-        // const {username, password, age, height} = req.body
-        // const newUser = {height, age, username, password}
-
+        
         for (const [key, value] of Object.entries(newUser)) {
             if (value == null) {
                 return res.status(400).json({
@@ -82,7 +78,6 @@ usersRouter
         username
     )
         .then(hasUserWithUsername => {
-            console.log(hasUserWithUsername);
             if(hasUserWithUsername) {
                 return res.status(400).json({error: {message: `Username already taken`}})
             }
@@ -167,7 +162,6 @@ usersRouter
             req.params.user_id
         )
         .then(user => {
-            console.log(user)
             res.json(user)
         })
         .catch(next)

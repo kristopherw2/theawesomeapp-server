@@ -11,7 +11,7 @@ const testUser = testUsers[0]
 before('make knex instance', () => {
     db = knex({
         client: 'pg',
-        connection: process.env.TEST_DB_URL,
+        connection: process.env.TEST_DATABASE_URL,
     })
     app.set('db', db);
 });
@@ -86,7 +86,7 @@ describe('POST /api/users/login', () => {
     })
 });
 
-describe.only(`Post /api/users/registration`, () => {
+describe(`Post /api/users/registration`, () => {
     context('User Validation', () => {
         
         beforeEach('insert users', () => {
@@ -206,20 +206,6 @@ describe.only(`Post /api/users/registration`, () => {
         });
     });
 });
-
-// describe(`Get /api/users/:user_id`, () => {
-
-//     context(`Given there are users in the database`, () => {
-        
-//         beforeEach(`insert testUsers`, () => {
-//             return db
-//             .insert(testUsers)
-//             .into('users')
-//         });
-
-//         it('responds with 404', () => {});
-//     });
-// });
 
 describe('PATCH /api/users/:user_id', () => {
     context(`Given no users`, () => {
