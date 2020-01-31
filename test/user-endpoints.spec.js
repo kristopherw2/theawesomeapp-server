@@ -28,6 +28,7 @@ afterEach(() => {
 
 after('disconnect from db', () => db.destroy());
 
+
 describe('POST /api/users/login', () => {
     
     beforeEach('insert testUsers', () => {
@@ -85,7 +86,7 @@ describe('POST /api/users/login', () => {
     })
 });
 
-describe(`Post /api/users/registration`, () => {
+describe.only(`Post /api/users/registration`, () => {
     context('User Validation', () => {
         
         beforeEach('insert users', () => {
@@ -94,14 +95,15 @@ describe(`Post /api/users/registration`, () => {
             .into('users')
         });
 
-        const requiredFields = ['username', 'password', 'age', 'height'];
+        const requiredFields = ['username', 'password', 'age', 'height', 'weight'];
         
-        const missingRequiredFields = ['username', 'password', 'age'];
+        const missingRequiredFields = ['username', 'password', 'age', 'weight'];
         missingRequiredFields.forEach(field => {
             const  registerAttempt = {
                 username: 'test username',
-                password: 'test password',
+                password: 'testpassword',
                 age: 34,
+                weight: 100
             }
         })
         it(`responds with 400 error when missing a field`, () => {
@@ -119,6 +121,7 @@ describe(`Post /api/users/registration`, () => {
                 password: '1234567',
                 age: 34,
                 height: 120,
+                weight: 200,
             }
             return supertest(app)
                 .post('/api/users/registration')
@@ -132,6 +135,7 @@ describe(`Post /api/users/registration`, () => {
                 password: 'a1'.repeat(37),
                 age: 34,
                 height: 120,
+                weight: 200
             }
 
             return supertest(app)
@@ -145,7 +149,8 @@ describe(`Post /api/users/registration`, () => {
                 username: 'testuser',
                 password: ' 12345678',
                 age: 34,
-                height: 120
+                height: 120,
+                weight: 300
             }
 
             return supertest(app)
@@ -159,7 +164,8 @@ describe(`Post /api/users/registration`, () => {
                 username: 'testuser',
                 password: '12345678 ',
                 age: 34,
-                height: 120
+                height: 120,
+                weight: 200
             }
 
             return supertest(app)
@@ -173,7 +179,8 @@ describe(`Post /api/users/registration`, () => {
                 username: 'testuser',
                 password: 'abcdefghijk',
                 age:34,
-                height: 120
+                height: 120,
+                weight: 200
             };
 
             return supertest(app)
@@ -187,7 +194,8 @@ describe(`Post /api/users/registration`, () => {
                 username: testUser.username,
                 password: "a1adwdwa",
                 age: 34,
-                height: 120
+                height: 120,
+                weight: 200
             }
 
             return supertest(app)
@@ -199,13 +207,59 @@ describe(`Post /api/users/registration`, () => {
     });
 });
 
+// describe(`Get /api/users/:user_id`, () => {
+
+//     context(`Given there are users in the database`, () => {
+        
+//         beforeEach(`insert testUsers`, () => {
+//             return db
+//             .insert(testUsers)
+//             .into('users')
+//         });
+
+//         it('responds with 404', () => {});
+//     });
+// });
+
 describe('PATCH /api/users/:user_id', () => {
     context(`Given no users`, () => {
+        
         it(`responds with 404`, () => {
-            const userId = 123456;
+            const userId = 123;
             return supertest(app)
             .patch(`/api/users/${userId}`)
             .expect(404, {error: {message: 'User does not exist'} })
+        });
+    });
+
+    context(`Given there are users in the database`, () => {
+        
+        beforeEach(`inserts testUsers`, () => {
+            return db
+            .insert(testUsers)
+            .into('users')
+        });
+
+        it(`responds with 204 and updates the user`, () => {
+            const idToUpdate = 2;
+            const updatedUserStats = {
+                age: 23,
+                weight: 1
+            };
+            const expectedUser = {
+                ...testUsers[idToUpdate-1],
+                ...updatedUserStats
+            }
+
+            return supertest(app)
+            .patch(`/api/users/${idToUpdate}`)
+            .send(updatedUserStats)
+            .expect(204)
+            .then(res => {
+                supertest(app)
+                .get(`/api/users/${idToUpdate}`)
+                .expect(expectedUser)
+            })
         });
     });
 });

@@ -12,7 +12,7 @@ usersRouter
         const knexInstance = req.app.get('db')
         UsersService.getAllUsers(knexInstance)
         .then(users => {
-            return res.json(users)
+            res.json(users)
         })
         .catch(next)
     })
@@ -21,8 +21,9 @@ usersRouter
     usersRouter
     .route('/registration')
     .post(jsonParser, (req, res, next) => {
-        const {username, password, age, height} = req.body
-        const newUser = {height, age, username, password}
+        const {username, password, age, height, weight} = req.body
+        const newUser = {height, age, username, password, weight}
+        console.log(newUser)
 
         // const {username, password, age, height} = req.body
         // const newUser = {height, age, username, password}
@@ -149,38 +150,54 @@ usersRouter
         UsersService.getUserById(
             req.app.get('db'),
             req.params.user_id
+            )
+            .then(user => {
+                if(!user) {
+                    return res.status(404).json({error: { message: `User does not exist`} })
+                }
+                res.user = user
+                next()
+            })
+            .catch(next)
+    })
+    .get((req, res, next) => {
+        
+        UsersService.getUserById(
+            req.app.get('db'),
+            req.params.user_id
         )
         .then(user => {
-            if(!user){
-                return res.status(404).json({error: {message: `User does not exist`} })
-            }
-            return res.user = usersRouter
-            next()   
+            console.log(user)
+            res.json(user)
         })
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-        const {id, username, weight} = req.body
-        const userToUpdate = {id, username, weight}
+        const {id, username, height, weight, age} = req.body
+        const userToUpdate = {id, username, height, weight, age}
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
+        
         if(numberOfValues === 0) {
             return res.status(400).json({
                 error: {
-                    message: `Request must contain a new weight`
+                    message: `Request must contain a new weight or age`
                 }
             })
         }
 
-        UsersService.updateUserWeight(
+
+        UsersService.updateUserStats(
             req.app.get('db'),
             req.params.user_id,
-            userToUpdate.weight
+            userToUpdate
         )
         .then(numRowsAffected => {
-            return res.status(204).end
-        })
+            res.status(204).end()
+        }) 
         .catch(next)
     });
+
+
 
 
     module.exports = usersRouter

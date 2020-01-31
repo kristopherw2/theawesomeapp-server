@@ -1,9 +1,16 @@
 const usersService = {
 
+    getAllUsers(knex) {
+        return knex
+        .select('*')
+        .from('users')
+    },
+
     getUserById(knex, id){
         return knex
         .from('users')
-        .where({id})
+        .select('*')
+        .where('id', id)
         .first()
     },
 
@@ -44,15 +51,14 @@ const usersService = {
             .from('users')
             .where({username})
             .select('username')
-            //.then(user => !!user)
+            .then(user => !!user)
     },
 
-    updateUserWeight(knex, id, newWeight) {
-        return knex
+    updateUserStats(knex, id, updatedStats) {
+        return knex ('users')
         .where({id})
-        .update(newWeight)
+        .update(updatedStats)
     }
-
 };
 
 module.exports = usersService

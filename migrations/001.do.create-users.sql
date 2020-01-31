@@ -3,5 +3,6 @@ CREATE TABLE users (
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     age INTEGER NOT NULL,
-    height INTEGER NOT NULL
+    height INTEGER NOT NULL,
+    weight INTEGER NOT NULL
 );
