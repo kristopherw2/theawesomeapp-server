@@ -30,6 +30,7 @@ const usersService = {
     },
 
     insertUser(knex, newUser) {
+        console.log(newUser)
         return knex
         .insert(newUser)
         .into("users")
