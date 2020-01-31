@@ -48,10 +48,9 @@ const usersService = {
     },
 
     hasUserWithUsername(knex, username){
-        return knex
-            .from('users')
+        return knex('users')
             .where({username})
-            .select('username')
+            .first()
             .then(user => !!user)
     },
 

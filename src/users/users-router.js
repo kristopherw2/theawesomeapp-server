@@ -81,17 +81,15 @@ usersRouter
             if(hasUserWithUsername) {
                 return res.status(400).json({error: {message: `Username already taken`}})
             }
-        })
-        .catch(next)
-
-    return UsersService.insertUser(
-        req.app.get('db'),
-        newUser
-    )
-        .then(user => {
-            return res.status(201)
-                .location(`/api/users`)
-                .json(user)
+            return UsersService.insertUser(
+                req.app.get('db'),
+                newUser
+            )
+                .then(user => {
+                    return res.status(201)
+                        .location(`/api/users`)
+                        .json(user)
+                })
         })
         .catch(next)
     })
