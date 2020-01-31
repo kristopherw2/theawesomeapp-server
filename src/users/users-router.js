@@ -84,7 +84,7 @@ usersRouter
         })
         .catch(next)
 
-    UsersService.insertUser(
+    return UsersService.insertUser(
         req.app.get('db'),
         newUser
     )
