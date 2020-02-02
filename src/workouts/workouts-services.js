@@ -1,8 +1,9 @@
 const WorkoutsService = {
     getWorkoutByUserId(knex, userId) {
-    return (knex)('workouts')
+    return (knex)
+        .from('workouts')
         .select('*')
-        .where('id', userId)
+        .where('userid', userId)
     }
 
 }
