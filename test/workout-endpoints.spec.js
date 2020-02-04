@@ -57,6 +57,76 @@ describe(`GET /api/workouts`, () => {
     });
 });
 
+describe(`GET /api/workouts/:workout_id`, () => {
+    
+    beforeEach(`insert users, workouts, and exercises`, () => {
+        return db
+        .into('users')
+        .insert(testUsers)
+        .then(() => {
+            return db
+            .into('workouts')
+            .insert(testWorkouts)
+            .then(() => {
+                return db
+                .into('exercises')
+                .insert(testExercises)
+            })
+        })
+    });
+
+    context(`There are workouts in the database`, () => {
+
+        it(`returns workouts by id`, () => {
+            const idToFind = 2
+            const expectedResponse = [{
+                workoutid: 2,
+                workoutname: "1-22-20",
+                userid: 1
+            }];
+
+            return supertest(app)
+                .get(`/api/workouts/${idToFind}`)
+                .expect(expectedResponse)
+        });
+    });
+
+});
+
+describe(`DELETE /api/workouts/:workout_id`, () => {
+    
+    beforeEach(`insert users, workouts, and exercises`, () => {
+        return db
+        .into('users')
+        .insert(testUsers)
+        .then(() => {
+            return db
+            .into('workouts')
+            .insert(testWorkouts)
+            .then(() => {
+                return db
+                .into('exercises')
+                .insert(testExercises)
+            })
+        })
+    });
+
+    context(`There are workouts in the database`, () => {
+        it(`Responds 204 and deletes workout`, () => {
+            const idToRemove = 2
+            const expectedResponse = testWorkouts.filter(workout => workout.workoutid !== idToRemove)
+            return supertest(app)
+                .delete(`/api/workouts/${idToRemove}`)
+                .expect(204)
+                .then(res => 
+                    supertest(app)
+                    .get(`/api/workouts/${idToRemove}`)
+                    .expect([])
+                    )
+        });
+    });
+});
+
 describe(`GET /api/workouts/user/:user_id`, () => {
 
     beforeEach(`insert users, workouts, and exercises`, () => {
@@ -77,7 +147,7 @@ describe(`GET /api/workouts/user/:user_id`, () => {
 
     context(`Given there are workouts in the database`, () => {
         
-        it.only(`returns a workout based on User ID`, () => {
+        it(`returns a workout based on User ID`, () => {
             const userId = 2;
             const expectedResponse = [ 
                 { workoutid: 5, workoutname: '1-21-20', userid: 2 },
@@ -90,10 +160,66 @@ describe(`GET /api/workouts/user/:user_id`, () => {
             return supertest(app)
             .get(`/api/workouts/user/${userId}`)
             .expect(expectedResponse)
-            // return WorkoutServices.getWorkoutByUserId(db, userId)
-            //     .then(actual => {
-            //         expect(actual).to.eql(expectedResponse)
-            //     })
         });
+
+    });
+
+    context(`Given there are no workouts in the database`, () => {
+        it(`200 and an empty array`, () => {
+            const userId = 12345
+
+            return supertest(app)
+                .get(`/api/workouts/user/${userId}`)
+                .expect(200, [])
+        });
+    });
+});
+
+describe(`DELETE /api/workouts/:workout_id`, () => {
+    context(`Give there are workouts in the database`, () => {
+
+        it(`responds with 204 and removes the workout`, () => {
+            const idToRemove = 2
+            const expectedResponse = testWorkouts.filter(workout => workout.workoutid !== idToRemove)
+            return supertest(app)
+                .delete(`/api/workouts/${idToRemove}`)
+                .expect(204)
+                .then(() => {
+                    return supertest(app)
+                        .get(`/api/workouts/${idToRemove}`)
+                        .expect([])
+                })
+        });
+    });
+});
+
+describe(`POST /api/workouts`, () => {
+
+    beforeEach(`insert users into users table`, () => {
+        return db
+        .insert(testUsers)
+        .into('users')
+    });
+
+    it(`creates a new workout responds with 201 and the new workout`, () => {
+        const newWorkout = {
+            workoutname: "2-3-20",
+            userid: 1
+        }
+
+        return supertest(app)
+            .post(`/api/workouts`)
+            .send(newWorkout)
+            .expect(201)
+            .expect(res => {
+                expect(res.body[0].workoutname).to.eql(newWorkout.workoutname)
+                expect(res.body[0]).to.have.property('workoutid')
+                expect(res.headers.location).to.eql(`/api/workouts/${res.body[0].workoutid}`)
+            })
+            .then(postRes => {
+                supertest(app)
+                .get(`/api/workouts/${postRes.workoutid}`)
+                .expect(postRes.body[0])
+            })
     });
 });
