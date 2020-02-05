@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const usersRouter = require('./users/users-router')
 const workoutsRouter = require('./workouts/workouts-router')
+const exercisesRouter = require('./exercises/exercises-router')
 
 const app = express()
 
@@ -18,6 +19,7 @@ app.use(express.json())
 
 app.use('/api/users', usersRouter)
 app.use('/api/workouts', workoutsRouter)
+app.use('/api/exercises', exercisesRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello, world!')

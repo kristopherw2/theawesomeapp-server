@@ -1,7 +1,7 @@
 const knex = require('knex');
 
 const ExercisesService = {
-    addNewExercise(knex,newExercise) {
+    addNewExercise(knex, newExercise) {
         return knex
         .insert(newExercise)
         .into('exercises')
@@ -10,7 +10,7 @@ const ExercisesService = {
     pullExercises(knex,workoutid) {
       return knex
       .from('exercises')
-      .select('*')
+      .select()
       .where('workoutid',workoutid)
     },
     deleteExercise(knex,exerciseid){

@@ -26,10 +26,10 @@ exercisesRouter
   });
 
 exercisesRouter
-  .route('/addNewExercise')
+  .route('/create')
   .post(jsonParser, (req, res, next) => {
-    const { exercisename, sets, repetitions, weight, time, caloriesburned } = req.body
-    const newExercise = { exercisename, sets, repetitions, weight, time, caloriesburned }
+    const { exercisename, sets, repetitions, weight, time, caloriesburned, workoutid } = req.body
+    const newExercise = { exercisename, sets, repetitions, weight, time, caloriesburned, workoutid }
 
     for (const [key, value] of Object.entries(newExercise)) {
       if (value == null) {
@@ -46,7 +46,7 @@ exercisesRouter
     )
       .then(newExercise => {
         res.status(201)
-          .location(`/api/exercises/addNewExercise`)
+          .location(path.posix.join(req.originalUrl + `/${newExercise[0].workoutid}`))
           .json(newExercise)
       })
       .catch(next)
@@ -56,20 +56,20 @@ exercisesRouter
   .route('/:exerciseid')
     .all((req, res, next) => {
       ExercisesService.deleteExercise(
-       req.app.get('db'),
-       req.params.exerciseid
-     )
-       .then(exercises => {
-         if (!exercises) {
-           return res.status(404).json({
-             error: { message: `Exercise ID doesn't exist` }
-           })
-       }
-         res.exercises = exercises // save the exercise for the next middleware
-         next()
-       })
-       .catch(next)
-   })
+      req.app.get('db'),
+      req.params.exerciseid
+  )
+    .then(exercises => {
+      if (!exercises) {
+        return res.status(404).json({
+          error: { message: `Exercise ID doesn't exist` }
+        })
+    }
+       res.exercises = exercises // save the exercise for the next middleware
+      next()
+    })
+    .catch(next)
+})
   .delete((req, res, next) => {
     const knexInstance = req.app.get('db')
     ExercisesService.deleteExercise(knexInstance, req.params.exerciseid)

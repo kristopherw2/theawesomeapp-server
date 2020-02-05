@@ -1,4 +1,5 @@
 const WorkoutsService = {
+    
     getWorkoutByUserId(knex, userId) {
     return (knex)
         .from('workouts')
