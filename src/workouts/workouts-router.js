@@ -16,7 +16,7 @@ workoutsRouter
         const { workoutname, userid } = req.body
         const newWorkout = {  workoutname, userid }
 
-        if(!workoutname) {
+        if(!workoutname || !userid) {
             return res.status(400).json({ error: { message: `Missing name in workout` } })
         }
 

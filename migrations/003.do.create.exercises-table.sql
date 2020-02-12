@@ -4,7 +4,7 @@ CREATE TABLE exercises (
     sets TEXT NOT NULL,
     repetitions TEXT,
     weight INTEGER NOT NULL,
-    time TEXT NOT NULL,
+    time INTEGER NOT NULL,
     caloriesBurned INTEGER NOT NULL,
     workoutId INTEGER REFERENCES workouts(workoutId) 
 );
