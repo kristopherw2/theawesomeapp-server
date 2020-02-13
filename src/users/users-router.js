@@ -86,9 +86,16 @@ usersRouter
                 newUser
             )
                 .then(user => {
+                    
                     return res.status(201)
                         .location(`/api/users`)
-                        .json(user)
+                        .json({
+                            id: user.id,
+                            username: user.username,
+                            age: user.age,
+                            height: user.height,
+                            weight: user.weight
+                        })
                 })
         })
         .catch(next)

@@ -70,6 +70,47 @@ describe(`GET /api/exercises/:workoutid`, () => {
     });
 });
 
+describe(`GET /api/exercises/user/:userid`, () => {
+
+    beforeEach(`insert users, workouts, and exercises`, () => {
+        return db
+        .into('users')
+        .insert(testUsers)
+        .then(() => {
+            return db
+            .into('workouts')
+            .insert(testWorkouts)
+            .then(() => {
+                return db
+                .into('exercises')
+                .insert(testExercises)
+            })
+        })
+    });
+    
+    context(`Given there are exercises in the database`, () => {
+
+        it(`Gets the exercise based on userId`, () => {
+            const userIdToFind = 2
+            const expectedResponse = [{
+                exerciseid: 2,
+                exercisename: "clean",
+                sets: "3",
+                repetitions: "10",
+                exerciseweight: 200,
+                time: 120,
+                caloriesburned:100,
+                workoutid: 2,
+                userid: 2
+            }]
+
+            return supertest(app)
+            .get(`/api/exercises/user/${userIdToFind}`)
+            .expect(expectedResponse)
+        });
+    });
+});
+
 describe(`POST /api/exercises/create`, () => {
 
     beforeEach(`insert users, workouts, and exercises`, () => {

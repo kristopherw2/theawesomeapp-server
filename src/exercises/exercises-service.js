@@ -7,7 +7,7 @@ const ExercisesService = {
         .into('exercises')
         .returning('*')
     },
-    pullExercises(knex,workoutid) {
+    getExercisesByWorkoutId(knex,workoutid) {
       return knex
       .from('exercises')
       .select()
@@ -18,6 +18,12 @@ const ExercisesService = {
       .from('exercises')
       .where('exerciseid',exerciseid)
       .del()
+    },
+    getExercisesByUserId(knex,userid) {
+      return knex
+      .from('exercises')
+      .select()
+      .where('userid',userid)
     }
 };
 

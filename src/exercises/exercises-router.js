@@ -11,7 +11,7 @@ exercisesRouter
   .route('/:workoutid')
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
-    ExercisesService.pullExercises(knexInstance, req.params.workoutid)
+    ExercisesService.getExercisesByWorkoutId(knexInstance, req.params.workoutid)
       .then(exercises => {
         if (!exercises) {
           return res.status(404).json({
@@ -78,5 +78,23 @@ exercisesRouter
       })
       .catch(next)
   });
+
+  exercisesRouter
+    .route('/user/:userid')
+    .get((req, res, next) => {
+      const knexInstance = req.app.get('db')
+      ExercisesService.getExercisesByUserId(
+        knexInstance,
+        req.params.userid
+      )
+      .then(exercises => {
+        if(!exercises){
+          return res.status(404).json({ error: { message: 'No exercises found for this user'}})
+        }
+        res.json(exercises)
+      })
+      
+
+    })
 
 module.exports = exercisesRouter
