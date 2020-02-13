@@ -73,8 +73,8 @@ exercisesRouter
   .delete((req, res, next) => {
     const knexInstance = req.app.get('db')
     ExercisesService.deleteExercise(knexInstance, req.params.exerciseid)
-      .then(deleteExercise => {
-        res.send('Exercise Deleted').status(204).end()
+      .then(() => {
+        res.status(204).end()
       })
       .catch(next)
   });
