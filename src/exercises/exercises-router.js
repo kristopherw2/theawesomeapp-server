@@ -28,8 +28,8 @@ exercisesRouter
 exercisesRouter
   .route('/create')
   .post(jsonParser, (req, res, next) => {
-    const { exercisename, sets, repetitions, weight, time, caloriesburned, workoutid } = req.body
-    const newExercise = { exercisename, sets, repetitions, weight, time, caloriesburned, workoutid }
+    const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid } = req.body
+    const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid }
 
     for (const [key, value] of Object.entries(newExercise)) {
       if (value == null) {

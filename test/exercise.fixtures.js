@@ -5,40 +5,44 @@ function makeExercisesArray () {
             exercisename: "bench-press",
             sets: 3,
             repetitions: 10,
-            weight: 200,
+            exerciseweight: 200,
             time: 120,
             caloriesburned:100,
-            workoutid: 1
+            workoutid: 1,
+            userid: 1
         },
         {
             exerciseid: 2,
             exercisename: "clean",
             sets: 3,
             repetitions: 10,
-            weight: 200,
+            exerciseweight: 200,
             time: 120,
             caloriesburned:100,
-            workoutid: 2
+            workoutid: 2,
+            userid: 2
         },
         {
             exerciseid: 3,
             exercisename: "deadlift",
             sets: 3,
             repetitions: 10,
-            weight: 200,
+            exerciseweight: 200,
             time: 120,
             caloriesburned:100,
-            workoutid: 3
+            workoutid: 3,
+            userid: 3
         },
         {
             exerciseid: 4,
             exercisename: "squat",
             sets: 3,
             repetitions: 10,
-            weight: 200,
+            exerciseweight: 200,
             time: 120,
             caloriesburned:100,
-            workoutid: 4
+            workoutid: 4,
+            userid: 4
         }
     ]
 }

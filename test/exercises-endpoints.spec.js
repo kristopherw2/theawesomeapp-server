@@ -56,10 +56,11 @@ describe(`GET /api/exercises/:workoutid`, () => {
                 exercisename: "clean",
                 sets: "3",
                 repetitions: "10",
-                weight: 200,
-                time: "120",
+                exerciseweight: 200,
+                time: 120,
                 caloriesburned:100,
-                workoutid: 2
+                workoutid: 2,
+                userid: 2
             }]
 
             return supertest(app)
@@ -88,10 +89,11 @@ describe(`POST /api/exercises/create`, () => {
             exercisename: "clean",
             sets: 3,
             repetitions: 10,
-            weight: 200,
+            exerciseweight: 200,
             time: 120,
             caloriesburned:100,
-            workoutid: 4
+            workoutid: 4,
+            userid: 2
         }
 
         return supertest(app)
