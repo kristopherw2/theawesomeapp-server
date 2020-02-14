@@ -95,15 +95,15 @@ describe(`Post /api/users/registration`, () => {
             .into('users')
         });
 
-        const requiredFields = ['username', 'password', 'age', 'height', 'weight'];
+        const requiredFields = ['username', 'password', 'age', 'height', 'userweight'];
         
-        const missingRequiredFields = ['username', 'password', 'age', 'weight'];
+        const missingRequiredFields = ['username', 'password', 'age', 'userweight'];
         missingRequiredFields.forEach(field => {
             const  registerAttempt = {
                 username: 'test username',
                 password: 'testpassword',
                 age: 34,
-                weight: 100
+                userweight: 100
             }
         })
         it(`responds with 400 error when missing a field`, () => {
@@ -121,7 +121,7 @@ describe(`Post /api/users/registration`, () => {
                 password: '1234567',
                 age: 34,
                 height: 120,
-                weight: 200,
+                userweight: 200,
             }
             return supertest(app)
                 .post('/api/users/registration')
@@ -135,7 +135,7 @@ describe(`Post /api/users/registration`, () => {
                 password: 'a1'.repeat(37),
                 age: 34,
                 height: 120,
-                weight: 200
+                userweight: 200
             }
 
             return supertest(app)
@@ -150,7 +150,7 @@ describe(`Post /api/users/registration`, () => {
                 password: ' 12345678',
                 age: 34,
                 height: 120,
-                weight: 300
+                userweight: 300
             }
 
             return supertest(app)
@@ -165,7 +165,7 @@ describe(`Post /api/users/registration`, () => {
                 password: '12345678 ',
                 age: 34,
                 height: 120,
-                weight: 200
+                userweight: 200
             }
 
             return supertest(app)
@@ -180,7 +180,7 @@ describe(`Post /api/users/registration`, () => {
                 password: 'abcdefghijk',
                 age:34,
                 height: 120,
-                weight: 200
+                userweight: 200
             };
 
             return supertest(app)
@@ -195,7 +195,7 @@ describe(`Post /api/users/registration`, () => {
                 password: "a1adwdwa",
                 age: 34,
                 height: 120,
-                weight: 200
+                userweight: 200
             }
 
             return supertest(app)
@@ -230,7 +230,7 @@ describe('PATCH /api/users/:user_id', () => {
             const idToUpdate = 2;
             const updatedUserStats = {
                 age: 23,
-                weight: 1
+                userweight: 1
             };
             const expectedUser = {
                 ...testUsers[idToUpdate-1],
