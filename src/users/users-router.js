@@ -7,18 +7,6 @@ const jsonParser = express.json();
 const xss = require('xss');
 
 usersRouter
-    .route('/')
-    .get((req, res, next) => {
-        const knexInstance = req.app.get('db')
-        UsersService.getAllUsers(knexInstance)
-        .then(users => {
-            res.json(users)
-        })
-        .catch(next)
-    })
-
-
-    usersRouter
     .route('/registration')
     .post(jsonParser, (req, res, next) => {
         const {username, password, age, height, weight} = req.body
@@ -119,6 +107,7 @@ usersRouter
             loginUser.username
         )
         .then(dbUser => {
+            console.log(dbUser)
             if(!dbUser)
             return res.status(400).json({
                 error: 'Incorrect username or password'
@@ -167,7 +156,16 @@ usersRouter
             req.params.user_id
         )
         .then(user => {
-            res.json(user)
+            if(!user) {
+                return res.status(404).json({error: {message: `User does not exist`}})
+            }
+            res.json({
+                id: user.id,
+                username: user.username,
+                age: user.age,
+                height: user.height,
+                weight: user.weight
+            })
         })
         .catch(next)
     })
