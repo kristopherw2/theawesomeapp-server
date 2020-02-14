@@ -1,6 +1,4 @@
-INSERT INTO workouts (workoutname, userid)
-VALUES
-INSERT INTO workouts (workoutname, userid)
+INSERT INTO workouts (workoutname, userId)
 VALUES
 ('Workout1', 1),
 ('Workout2', 1),

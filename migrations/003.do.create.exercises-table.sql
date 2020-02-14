@@ -7,5 +7,5 @@ CREATE TABLE exercises (
     time INTEGER NOT NULL,
     caloriesBurned INTEGER NOT NULL,
     workoutId INTEGER REFERENCES workouts(workoutId),
-    userid INTEGER REFERENCES users(id)
+    userId INTEGER REFERENCES users(id)
 );

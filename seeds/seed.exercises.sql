@@ -1,4 +1,4 @@
-INSERT INTO exercises (exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid)
+INSERT INTO exercises (exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutId, userId)
 VALUES
 ('bench-press', 3, 10, 200, 120, 100, 1, 1),
 ('squat', 3, 10, 200, 120, 100, 3, 2),
