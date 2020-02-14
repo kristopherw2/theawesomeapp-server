@@ -4,5 +4,5 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     age INTEGER NOT NULL,
     height INTEGER NOT NULL,
-    weight INTEGER NOT NULL
+    userweight INTEGER NOT NULL
 );

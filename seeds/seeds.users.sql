@@ -1,4 +1,4 @@
-INSERT INTO users (username, password, age, height, weight)
+INSERT INTO users (username, password, age, height, userweight)
 VALUES
 ('firstuser', 'password1', 35, 70, 100),
 ('seconduser', 'password2', 34, 69, 200),
