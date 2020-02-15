@@ -169,8 +169,8 @@ usersRouter
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-        const {id, username, height, userweight, age} = req.body
-        const userToUpdate = {id, username, height, userweight, age}
+        const {id, username, userweight} = req.body
+        const userToUpdate = {id, username, userweight}
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         
         if(numberOfValues === 0) {
@@ -188,7 +188,7 @@ usersRouter
             userToUpdate
         )
         .then(numRowsAffected => {
-            res.status(204).end()
+            res.json({message: `this is working`}).status(200).end()
         }) 
         .catch(next)
     });
