@@ -229,7 +229,6 @@ describe('PATCH /api/users/:user_id', () => {
         it(`responds with 204 and updates the user`, () => {
             const idToUpdate = 2;
             const updatedUserStats = {
-                age: 23,
                 userweight: 1
             };
             const expectedUser = {
@@ -240,7 +239,7 @@ describe('PATCH /api/users/:user_id', () => {
             return supertest(app)
             .patch(`/api/users/${idToUpdate}`)
             .send(updatedUserStats)
-            .expect(204)
+            .expect(200)
             .then(res => {
                 supertest(app)
                 .get(`/api/users/${idToUpdate}`)
