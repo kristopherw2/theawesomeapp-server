@@ -107,7 +107,6 @@ usersRouter
             loginUser.username
         )
         .then(dbUser => {
-            console.log(dbUser)
             if(!dbUser)
             return res.status(400).json({
                 error: 'Incorrect username or password'
@@ -170,8 +169,8 @@ usersRouter
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-        const {id, username, height, userweight, age} = req.body
-        const userToUpdate = {id, username, height, userweight, age}
+        const {id, username, userweight} = req.body
+        const userToUpdate = {id, username, userweight}
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         
         if(numberOfValues === 0) {
@@ -189,7 +188,7 @@ usersRouter
             userToUpdate
         )
         .then(numRowsAffected => {
-            res.status(204).end()
+            res.json({message: `update completed`}).status(204).end()
         }) 
         .catch(next)
     });
