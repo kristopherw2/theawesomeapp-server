@@ -6,7 +6,7 @@ function makeUsersArray() {
             password: 'password1',
             age: 35,
             height: 70,
-            weight: 120,
+            userweight: 120,
         },
         {
             id: 2,
@@ -14,7 +14,7 @@ function makeUsersArray() {
             password: 'password2',
             age: 34,
             height: 69,
-            weight: 140
+            userweight: 140
         },
         {
             id: 3,
@@ -22,7 +22,7 @@ function makeUsersArray() {
             password: 'password3',
             age: 33,
             height: 68,
-            weight: 200
+            userweight: 200
         },
         {
             id: 4,
@@ -30,7 +30,7 @@ function makeUsersArray() {
             password: 'password4',
             age: 32,
             height: 67,
-            weight: 245
+            userweight: 245
         }
     ]
 };

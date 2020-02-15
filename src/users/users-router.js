@@ -9,8 +9,8 @@ const xss = require('xss');
 usersRouter
     .route('/registration')
     .post(jsonParser, (req, res, next) => {
-        const {username, password, age, height, weight} = req.body
-        const newUser = {height, age, username, password, weight}
+        const {username, password, age, height, userweight} = req.body
+        const newUser = {height, age, username, password, userweight}
         
         for (const [key, value] of Object.entries(newUser)) {
             if (value == null) {
@@ -82,7 +82,7 @@ usersRouter
                             username: user.username,
                             age: user.age,
                             height: user.height,
-                            weight: user.weight
+                            userweight: user.userweight
                         })
                 })
         })
@@ -164,14 +164,14 @@ usersRouter
                 username: user.username,
                 age: user.age,
                 height: user.height,
-                weight: user.weight
+                userweight: user.userweight
             })
         })
         .catch(next)
     })
     .patch(jsonParser, (req, res, next) => {
-        const {id, username, height, weight, age} = req.body
-        const userToUpdate = {id, username, height, weight, age}
+        const {id, username, height, userweight, age} = req.body
+        const userToUpdate = {id, username, height, userweight, age}
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         
         if(numberOfValues === 0) {
