@@ -248,14 +248,12 @@ describe(`POST /api/workouts`, () => {
                 expect(res.headers.location).to.eql(`/api/workouts/${res.body[0].workoutid}`)
             })
             .expect(res => {
-            console.log(`Yeah this is ${res.body[0].workoutid}`)
                 db
                     .from('workouts')
                     .select('*')
                     .where({ workoutid: res.body[0].workoutid})
                     .first()
                     .then(row => {
-                        console.log(row)
                         expect(row.workoutname).to.eql(newWorkout.workoutname)
                         expect(row.userid).to.eql(testUser.id)
                     })

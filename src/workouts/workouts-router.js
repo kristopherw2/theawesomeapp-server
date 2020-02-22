@@ -15,7 +15,6 @@ workoutsRouter
         res.send("Workouts is working")
     })
     .post(requireAuth, jsonParer, (req, res, next) => {
-        console.log(`In the post`, Object.keys(req.user))
         const { workoutname } = req.body
         const newWorkout = {  workoutname }
 

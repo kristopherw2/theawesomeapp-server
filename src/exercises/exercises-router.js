@@ -29,10 +29,9 @@ exercisesRouter
 
 exercisesRouter
   .route('/create')
-  .all(requireAuth)
-  .post(jsonParser, (req, res, next) => {
-    const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid } = req.body
-    const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid }
+  .post(requireAuth, jsonParser, (req, res, next) => {
+    const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid} = req.body
+    const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid}
 
     for (const [key, value] of Object.entries(newExercise)) {
       if (value == null) {
@@ -41,6 +40,7 @@ exercisesRouter
         })
       }
     }
+    newExercise.userid = req.user.id
 
 
     ExercisesService.addNewExercise(
