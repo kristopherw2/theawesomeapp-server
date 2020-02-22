@@ -1,6 +1,7 @@
 const express = require('express')
 const WorkoutsService = require('./workouts-services')
 const path = require('path')
+const { requireAuth } = require('../middleware/basic-auth')
 
 
 const jsonParer = express.json()
@@ -8,17 +9,22 @@ const workoutsRouter = express.Router()
 
 workoutsRouter
     .route("/")
+    .all(requireAuth)
     .get((req, res, next) => {
-        const knexInstance = (req.app.get('db'))
+        (req.app.get('db'))
         res.send("Workouts is working")
     })
-    .post(jsonParer, (req, res, next) => {
-        const { workoutname, userid } = req.body
-        const newWorkout = {  workoutname, userid }
+    .post(requireAuth, jsonParer, (req, res, next) => {
+        console.log(`In the post`, Object.keys(req.user))
+        const { workoutname } = req.body
+        const newWorkout = {  workoutname }
 
-        if(!workoutname || !userid) {
-            return res.status(400).json({ error: { message: `Missing name in workout` } })
-        }
+        for (const [key, value] of Object.entries(newWorkout))
+            if (value == null)
+                return res.status(400).json({
+                error: `Missing '${key}' in request body`
+        })
+        newWorkout.userid = req.user.id
 
         WorkoutsService.createWorkout(
             req.app.get('db'),
@@ -34,6 +40,7 @@ workoutsRouter
 
 workoutsRouter
     .route("/:workout_id")
+    .all(requireAuth)
     .get((req, res, next) => {
         const knexIntsance = req.app.get('db');
         WorkoutsService.getWorkoutById(

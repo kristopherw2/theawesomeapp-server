@@ -12,6 +12,12 @@ const testUsers = makeUsersArray();
 const testWorkouts = makeWorkoutsArray();
 const testExercises = makeExercisesArray();
 
+//creates auth header for tests
+function makeAuthHeader(user) {
+    const token = Buffer.from(`${user.username}: ${user.password}`).toString('base64')
+    return `Basic ${token}`
+}
+
 before(() => {
     db = knex ({
         client: "pg",
@@ -52,6 +58,7 @@ describe(`GET /api/workouts`, () => {
         it(`returns a response`, () => {
             return supertest(app)
             .get('/api/workouts')
+            .set('authorization', makeAuthHeader(testUsers[0]))
             .expect('Workouts is working')
         });
     });
@@ -87,6 +94,7 @@ describe(`GET /api/workouts/:workout_id`, () => {
 
             return supertest(app)
                 .get(`/api/workouts/${idToFind}`)
+                .set('authorization', makeAuthHeader(testUsers[0]))
                 .expect(expectedResponse)
         });
     });
@@ -117,10 +125,12 @@ describe(`DELETE /api/workouts/:workout_id`, () => {
             const expectedResponse = testWorkouts.filter(workout => workout.workoutid !== idToRemove)
             return supertest(app)
                 .delete(`/api/workouts/${idToRemove}`)
+                .set('authorization', makeAuthHeader(testUsers[0]))
                 .expect(204)
                 .then(res => 
                     supertest(app)
                     .get(`/api/workouts/${idToRemove}`)
+                    .set('authorization', makeAuthHeader(testUsers[0]))
                     .expect([])
                     )
         });
@@ -176,6 +186,23 @@ describe(`GET /api/workouts/user/:user_id`, () => {
 });
 
 describe(`DELETE /api/workouts/:workout_id`, () => {
+
+    beforeEach(`insert users, workouts, and exercises`, () => {
+        return db
+        .into('users')
+        .insert(testUsers)
+        .then(() => {
+            return db
+            .into('workouts')
+            .insert(testWorkouts)
+            .then(() => {
+                return db
+                .into('exercises')
+                .insert(testExercises)
+            })
+        })
+    });
+
     context(`Give there are workouts in the database`, () => {
 
         it(`responds with 204 and removes the workout`, () => {
@@ -183,10 +210,12 @@ describe(`DELETE /api/workouts/:workout_id`, () => {
             const expectedResponse = testWorkouts.filter(workout => workout.workoutid !== idToRemove)
             return supertest(app)
                 .delete(`/api/workouts/${idToRemove}`)
+                .set('authorization', makeAuthHeader(testUsers[0]))
                 .expect(204)
                 .then(() => {
                     return supertest(app)
                         .get(`/api/workouts/${idToRemove}`)
+                        .set('authorization', makeAuthHeader(testUsers[0]))
                         .expect([])
                 })
         });
@@ -202,19 +231,34 @@ describe(`POST /api/workouts`, () => {
     });
 
     it(`creates a new workout responds with 201 and the new workout`, () => {
+        const testUser = testUsers[0]
         const newWorkout = {
             workoutname: "2-3-20",
-            userid: 1
         }
 
         return supertest(app)
             .post(`/api/workouts`)
+            .set('authorization', makeAuthHeader(testUsers[0]))
             .send(newWorkout)
             .expect(201)
             .expect(res => {
+                console.log(res.body[0])
                 expect(res.body[0].workoutname).to.eql(newWorkout.workoutname)
                 expect(res.body[0]).to.have.property('workoutid')
                 expect(res.headers.location).to.eql(`/api/workouts/${res.body[0].workoutid}`)
+            })
+            .expect(res => {
+            console.log(`Yeah this is ${res.body[0].workoutid}`)
+                db
+                    .from('workouts')
+                    .select('*')
+                    .where({ workoutid: res.body[0].workoutid})
+                    .first()
+                    .then(row => {
+                        console.log(row)
+                        expect(row.workoutname).to.eql(newWorkout.workoutname)
+                        expect(row.userid).to.eql(testUser.id)
+                    })
             })
             .then(postRes => {
                 supertest(app)

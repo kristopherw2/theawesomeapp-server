@@ -12,6 +12,12 @@ const testUsers = makeUsersArray();
 const testWorkouts = makeWorkoutsArray();
 const testExercises = makeExercisesArray();
 
+//creates auth header for tests
+function makeAuthHeader(user) {
+    const token = Buffer.from(`${user.username}: ${user.password}`).toString('base64')
+    return `Basic ${token}`
+}
+
 before(() => {
     db = knex ({
         client: "pg",
@@ -50,21 +56,22 @@ describe(`GET /api/exercises/:workoutid`, () => {
     context(`Given there are exercises in the database`, () => {
 
         it(`Gets the exercise based on workoutId`, () => {
-            const workoutIdToFind = 2
+            const workoutIdToFind = 1
             const expectedResponse = [{
-                exerciseid: 2,
-                exercisename: "clean",
+                exerciseid: 1,
+                exercisename: "bench-press",
                 sets: "3",
                 repetitions: "10",
                 exerciseweight: 200,
                 time: 120,
                 caloriesburned:100,
-                workoutid: 2,
-                userid: 2
+                workoutid: 1,
+                userid: 1
             }]
 
             return supertest(app)
             .get(`/api/exercises/${workoutIdToFind}`)
+            .set('authorization', makeAuthHeader(testUsers[0]))
             .expect(expectedResponse)
         });
     });
@@ -91,21 +98,22 @@ describe(`GET /api/exercises/user/:userid`, () => {
     context(`Given there are exercises in the database`, () => {
 
         it(`Gets the exercise based on userId`, () => {
-            const userIdToFind = 2
+            const userIdToFind = 1
             const expectedResponse = [{
-                exerciseid: 2,
-                exercisename: "clean",
+                exerciseid: 1,
+                exercisename: "bench-press",
                 sets: "3",
                 repetitions: "10",
                 exerciseweight: 200,
                 time: 120,
                 caloriesburned:100,
-                workoutid: 2,
-                userid: 2
+                workoutid: 1,
+                userid: 1
             }]
 
             return supertest(app)
             .get(`/api/exercises/user/${userIdToFind}`)
+            .set('authorization', makeAuthHeader(testUsers[0]))
             .expect(expectedResponse)
         });
     });
@@ -134,12 +142,13 @@ describe(`POST /api/exercises/create`, () => {
             time: 120,
             caloriesburned:100,
             workoutid: 4,
-            userid: 2
+            userid: 1
         }
 
         return supertest(app)
         .post(`/api/exercises/create`)
         .send(newExercise)
+        .set('authorization', makeAuthHeader(testUsers[0]))
         .expect(201)
         .expect(res => {
             expect(res.body[0].exercisename).to.eql(newExercise.exercisename)
@@ -171,13 +180,15 @@ describe(`DELETE /api/exercises/:exerciseid`, () => {
     context(`Given there are exercises in the database`, () => {
 
         it(`Deletes the exercise and returns 204 and exersice deleted`, () => {
-            const idToRemove = 2
+            const idToRemove = 1
             return supertest(app)
                 .delete(`/api/workouts/${idToRemove}`)
+                .set('authorization', makeAuthHeader(testUsers[0]))
                 .expect(204)
                 .then(() => {
                     return supertest(app)
                     .get(`/api/exercises/${idToRemove}`)
+                    .set('authorization', makeAuthHeader(testUsers[0]))
                     .expect([])
                 })
         })

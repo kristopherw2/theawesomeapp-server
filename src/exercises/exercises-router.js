@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const ExercisesService = require('./exercises-service')
+const { requireAuth } = require( '../middleware/basic-auth')
 
 const exercisesRouter = express.Router();
 const jsonParser = express.json();
@@ -9,6 +10,7 @@ const xss = require('xss');
 
 exercisesRouter
   .route('/:workoutid')
+  .all(requireAuth)
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     ExercisesService.getExercisesByWorkoutId(knexInstance, req.params.workoutid)
@@ -27,6 +29,7 @@ exercisesRouter
 
 exercisesRouter
   .route('/create')
+  .all(requireAuth)
   .post(jsonParser, (req, res, next) => {
     const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid } = req.body
     const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid }
@@ -81,6 +84,7 @@ exercisesRouter
 
   exercisesRouter
     .route('/user/:userid')
+    .all(requireAuth)
     .get((req, res, next) => {
       const knexInstance = req.app.get('db')
       ExercisesService.getExercisesByUserId(
