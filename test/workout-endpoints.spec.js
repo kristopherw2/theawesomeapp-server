@@ -5,6 +5,7 @@ const WorkoutServices = require('../src/workouts/workouts-services')
 const { makeUsersArray } = require('./users.fixtures')
 const { makeWorkoutsArray } = require('./workout.fixtures')
 const { makeExercisesArray } = require('./exercise.fixtures')
+const jwt = require('jsonwebtoken')
 
 let db;
 
@@ -13,9 +14,12 @@ const testWorkouts = makeWorkoutsArray();
 const testExercises = makeExercisesArray();
 
 //creates auth header for tests
-function makeAuthHeader(user) {
-    const token = Buffer.from(`${user.username}: ${user.password}`).toString('base64')
-    return `Basic ${token}`
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+    const token = jwt.sign({id: user.id }, secret, {
+        subject: user.username,
+        algorithm: 'HS256'
+    })
+    return `bearer ${token}`
 }
 
 before(() => {
@@ -58,7 +62,7 @@ describe(`GET /api/workouts`, () => {
         it(`returns a response`, () => {
             return supertest(app)
             .get('/api/workouts')
-            .set('authorization', makeAuthHeader(testUsers[0]))
+            .set('authorization', makeAuthHeader(testUsers[3]))
             .expect('Workouts is working')
         });
     });
@@ -137,7 +141,7 @@ describe(`DELETE /api/workouts/:workout_id`, () => {
     });
 });
 
-describe(`GET /api/workouts/user/:user_id`, () => {
+describe(`GET /api/workouts/user`, () => {
 
     beforeEach(`insert users, workouts, and exercises`, () => {
         return db
@@ -158,7 +162,6 @@ describe(`GET /api/workouts/user/:user_id`, () => {
     context(`Given there are workouts in the database`, () => {
         
         it(`returns a workout based on User ID`, () => {
-            const userId = 2;
             const expectedResponse = [ 
                 { workoutid: 5, workoutname: '1-21-20', userid: 2 },
                 { workoutid: 6, workoutname: '1-22-20', userid: 2 },
@@ -168,7 +171,8 @@ describe(`GET /api/workouts/user/:user_id`, () => {
 
 
             return supertest(app)
-            .get(`/api/workouts/user/${userId}`)
+            .get(`/api/workouts/user`)
+            .set('authorization', makeAuthHeader(testUsers[1]))
             .expect(expectedResponse)
         });
 
@@ -179,7 +183,8 @@ describe(`GET /api/workouts/user/:user_id`, () => {
             const userId = 12345
 
             return supertest(app)
-                .get(`/api/workouts/user/${userId}`)
+                .get(`/api/workouts/user`)
+                .set("authorization", makeAuthHeader(testUsers[3]))
                 .expect(200, [])
         });
     });
@@ -242,7 +247,6 @@ describe(`POST /api/workouts`, () => {
             .send(newWorkout)
             .expect(201)
             .expect(res => {
-                console.log(res.body[0])
                 expect(res.body[0].workoutname).to.eql(newWorkout.workoutname)
                 expect(res.body[0]).to.have.property('workoutid')
                 expect(res.headers.location).to.eql(`/api/workouts/${res.body[0].workoutid}`)

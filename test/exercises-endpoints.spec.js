@@ -1,10 +1,10 @@
 const { expect } = require('chai')
 const knex = require('knex') 
 const app = require('../src/app')
-const WorkoutServices = require('../src/workouts/workouts-services')
 const { makeUsersArray } = require('./users.fixtures')
 const { makeWorkoutsArray } = require('./workout.fixtures')
 const { makeExercisesArray } = require('./exercise.fixtures')
+const jwt = require('jsonwebtoken')
 
 let db;
 
@@ -13,9 +13,12 @@ const testWorkouts = makeWorkoutsArray();
 const testExercises = makeExercisesArray();
 
 //creates auth header for tests
-function makeAuthHeader(user) {
-    const token = Buffer.from(`${user.username}: ${user.password}`).toString('base64')
-    return `Basic ${token}`
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+    const token = jwt.sign({id: user.id }, secret, {
+        subject: user.username,
+        algorithm: 'HS256'
+    })
+    return `bearer ${token}`
 }
 
 before(() => {
@@ -77,7 +80,7 @@ describe(`GET /api/exercises/:workoutid`, () => {
     });
 });
 
-describe(`GET /api/exercises/user/:userid`, () => {
+describe(`GET /api/exercises/user/userslices`, () => {
 
     beforeEach(`insert users, workouts, and exercises`, () => {
         return db
@@ -98,7 +101,6 @@ describe(`GET /api/exercises/user/:userid`, () => {
     context(`Given there are exercises in the database`, () => {
 
         it(`Gets the exercise based on userId`, () => {
-            const userIdToFind = 1
             const expectedResponse = [{
                 exerciseid: 1,
                 exercisename: "bench-press",
@@ -112,7 +114,7 @@ describe(`GET /api/exercises/user/:userid`, () => {
             }]
 
             return supertest(app)
-            .get(`/api/exercises/user/${userIdToFind}`)
+            .get(`/api/exercises/user/userslices`)
             .set('authorization', makeAuthHeader(testUsers[0]))
             .expect(expectedResponse)
         });

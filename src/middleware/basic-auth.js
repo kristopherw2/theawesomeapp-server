@@ -1,8 +1,7 @@
 const AuthService = require('../auth/auth-service')
 
 function requireAuth(req, res, next) {
-  console.log('require auth')
-  console.log(req.get('authorization'))
+  
   const authToken = req.get('Authorization') || ''
 
   let basicToken
