@@ -59,26 +59,6 @@ function makeWorkoutsArray () {
             workoutid: 12,
             workoutname: "1-24-20",
             userid: 3
-        },
-        {
-            workoutid: 13,
-            workoutname: "1-21-20",
-            userid: 4
-        },
-        {
-            workoutid: 14,
-            workoutname: "1-22-20",
-            userid: 4
-        },
-        {
-            workoutid: 15,
-            workoutname: "1-23-20",
-            userid: 4
-        },
-        {
-            workoutid: 16,
-            workoutname: "1-24-20",
-            userid: 4
         }
     ]
 }

@@ -33,17 +33,6 @@ function makeExercisesArray () {
             workoutid: 3,
             userid: 3
         },
-        {
-            exerciseid: 4,
-            exercisename: "squat",
-            sets: 3,
-            repetitions: 10,
-            exerciseweight: 200,
-            time: 120,
-            caloriesburned:100,
-            workoutid: 4,
-            userid: 4
-        }
     ]
 }
 
