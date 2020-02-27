@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
 const UsersService = require('./users-service')
+const Authservice = require('../auth/auth-service')
+const { requireAuth } = require('../middleware/jwt-auth')
 
 const usersRouter = express.Router();
 const jsonParser = express.json();
@@ -122,22 +124,19 @@ usersRouter
                     })
                 }
                 const sub = dbUser.username
-                const payload = dbUser.id
-                return res.send({
-                    id: payload,
-                    username: sub,
-                })
+                const payload = {id: dbUser.id}
+                return res.send({authToken: Authservice.createJwt(sub, payload)})
             })
         })
         .catch(next)
     });
 
     usersRouter
-    .route('/:user_id')
-    .all((req, res, next) => {
+    .route('/userstats')
+    .all(requireAuth, jsonParser, (req, res, next) => {
         UsersService.getUserById(
             req.app.get('db'),
-            req.params.user_id
+            req.user.id
             )
             .then(user => {
                 if(!user) {
@@ -148,16 +147,16 @@ usersRouter
             })
             .catch(next)
     })
-    .get((req, res, next) => {
-        
+    .get(requireAuth, jsonParser, (req, res, next) => {
         UsersService.getUserById(
             req.app.get('db'),
-            req.params.user_id
+            req.user.id
         )
         .then(user => {
             if(!user) {
                 return res.status(404).json({error: {message: `User does not exist`}})
             }
+            console.log(user)
             res.json({
                 id: user.id,
                 username: user.username,
@@ -168,9 +167,10 @@ usersRouter
         })
         .catch(next)
     })
-    .patch(jsonParser, (req, res, next) => {
-        const {id, username, userweight} = req.body
-        const userToUpdate = {id, username, userweight}
+    .patch( requireAuth, jsonParser, (req, res, next) => {
+        const { username, userweight} = req.body
+        const userToUpdate = { username, userweight}
+        userToUpdate.id = req.user.id
         const numberOfValues = Object.values(userToUpdate).filter(Boolean).length
         
         if(numberOfValues === 0) {
@@ -184,7 +184,7 @@ usersRouter
 
         UsersService.updateUserStats(
             req.app.get('db'),
-            req.params.user_id,
+            req.user.id,
             userToUpdate
         )
         .then(numRowsAffected => {

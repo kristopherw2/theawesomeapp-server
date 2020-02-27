@@ -2,11 +2,23 @@ const { expect } = require('chai');
 const knex = require('knex')
 const app = require('../src/app')
 const { makeUsersArray } = require('./users.fixtures')
+const AuthService = require('../src/auth/auth-service')
+const jwt = require("jsonwebtoken");
+
 
 let db
 
 const testUsers = makeUsersArray();
 const testUser = testUsers[0]
+
+//creates auth header for tests
+function makeAuthHeader(user, secret = process.env.JWT_SECRET) {
+    const token = jwt.sign({id: user.id }, secret, {
+        subject: user.username,
+        algorithm: 'HS256'
+    })
+    return `bearer ${token}`
+}
 
 before('make knex instance', () => {
     db = knex({
@@ -74,15 +86,11 @@ describe('POST /api/users/login', () => {
             password: testUser.password
         };
 
-        const expectedResponse = {
-            username: testUser.username,
-            id: testUser.id
-        }
         
         return supertest(app)
         .post('/api/users/login')
         .send(userValidCreds)
-        .expect(200, expectedResponse)
+        .expect(200)
     })
 });
 
@@ -207,16 +215,7 @@ describe(`Post /api/users/registration`, () => {
     });
 });
 
-describe('PATCH /api/users/:user_id', () => {
-    context(`Given no users`, () => {
-        
-        it(`responds with 404`, () => {
-            const userId = 123;
-            return supertest(app)
-            .patch(`/api/users/${userId}`)
-            .expect(404, {error: {message: 'User does not exist'} })
-        });
-    });
+describe('PATCH /api/users/userstats', () => {
 
     context(`Given there are users in the database`, () => {
         
@@ -237,7 +236,8 @@ describe('PATCH /api/users/:user_id', () => {
             }
 
             return supertest(app)
-            .patch(`/api/users/${idToUpdate}`)
+            .patch(`/api/users/userstats`)
+            .set('authorization', makeAuthHeader(testUsers[1]))
             .send(updatedUserStats)
             .expect(200)
             .then(res => {

@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const ExercisesService = require('./exercises-service')
+const { requireAuth } = require( '../middleware/jwt-auth')
 
 const exercisesRouter = express.Router();
 const jsonParser = express.json();
@@ -9,6 +10,7 @@ const xss = require('xss');
 
 exercisesRouter
   .route('/:workoutid')
+  .all(requireAuth)
   .get((req, res, next) => {
     const knexInstance = req.app.get('db')
     ExercisesService.getExercisesByWorkoutId(knexInstance, req.params.workoutid)
@@ -27,9 +29,9 @@ exercisesRouter
 
 exercisesRouter
   .route('/create')
-  .post(jsonParser, (req, res, next) => {
-    const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid } = req.body
-    const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid, userid }
+  .post(requireAuth, jsonParser, (req, res, next) => {
+    const { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid} = req.body
+    const newExercise = { exercisename, sets, repetitions, exerciseweight, time, caloriesburned, workoutid}
 
     for (const [key, value] of Object.entries(newExercise)) {
       if (value == null) {
@@ -38,6 +40,7 @@ exercisesRouter
         })
       }
     }
+    newExercise.userid = req.user.id
 
 
     ExercisesService.addNewExercise(
@@ -80,12 +83,12 @@ exercisesRouter
   });
 
   exercisesRouter
-    .route('/user/:userid')
-    .get((req, res, next) => {
+    .route('/user/userslices')
+    .get(requireAuth, jsonParser, (req, res, next) => {
       const knexInstance = req.app.get('db')
       ExercisesService.getExercisesByUserId(
         knexInstance,
-        req.params.userid
+        req.user.id
       )
       .then(exercises => {
         if(!exercises){
