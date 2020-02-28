@@ -156,7 +156,6 @@ usersRouter
             if(!user) {
                 return res.status(404).json({error: {message: `User does not exist`}})
             }
-            console.log(user)
             res.json({
                 id: user.id,
                 username: user.username,
