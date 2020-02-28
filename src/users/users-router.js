@@ -187,7 +187,7 @@ usersRouter
             userToUpdate
         )
         .then(numRowsAffected => {
-            res.json({message: `this is working`}).status(200).end()
+            res.json({message: `user weight updated`}).status(200).end()
         }) 
         .catch(next)
     });
