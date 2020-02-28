@@ -1,26 +1,56 @@
-# Express Boilerplate!
+# Fitness Pizza
 
-This is a boilerplate project used for starting new projects!
+## Live App
+https://fitness-pizza-client.now.sh/
 
-## Set up
+## Documentation
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+**/api/users**
+POST /registration
+POST /login
+GET /userstats
+PATCH /userstats
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+**/api/workouts**
+POST /api/workouts
+GET /user
+GET /:workout_id
+DELETE /:workout_id
 
-## Scripts
 
-Start the application `npm start`
+**/api/exercises**
+GET /:workout_id
+POST /create
+DELETE /:exerciseid
+GET /user/userslices
 
-Start nodemon for the application `npm run dev`
+## Screenshots
 
-Run the tests `npm test`
+### Landing Page
+![Landing Page](screenshots\LandingPage.PNG)
 
-## Deploying
+### Login
+![Login Page](screenshots\LoginPage.PNG)
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+### Registration
+![Registration Page](screenshots\Registration.PNG)
+
+### User Information
+![User Information](screenshots\UserInformation.PNG)
+
+### Create Workout
+![Create Workout](screenshots\CreateWorkout.PNG)
+
+### Exercise Creation
+![Exercise Creation](screenshots\ExerciseCreation.PNG)
+
+## App Summary
+No matter your education level Fitness Pizza aims to join former adversaries, Pizza and Fitness, together to help you slice your way into better health. It’s simple, really! Tell Fitness pizza how hard, or soft, you trained that day. It then bakes all that data into a tangible, understandable, result: Slices of delicious pizza!
+
+Fitness Pizza will tell you, based off your calories burned, how many slices you burned off that beautiful body of yours. Giving you the power to know, for sure, if you really did earn that coveted cheat meal.
+
+## Built With
+- React
+- Node
+- Express
+- PostgreSQL
